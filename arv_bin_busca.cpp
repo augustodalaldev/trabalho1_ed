@@ -1,16 +1,16 @@
 #include <cstdio>
 #include <string>
-
+// testando oi oi
 using std::string;
 
 class No {
   friend class ArvBinBusca;
-  
+
 public:
   No(const int chave);
 
   void escreve(const char *sep = "");
-  
+
 private:
   int chave;
   No *pai;
@@ -26,7 +26,7 @@ public:
   ArvBinBusca(const ArvBinBusca& outro); // construtor de cópia
   ~ArvBinBusca();
   ArvBinBusca& operator=(const ArvBinBusca& outro); // operador de atribuição
-  
+
   void escreve_ordenado(); // escreve em percurso em-ordem
   void escreve();
 
@@ -41,23 +41,23 @@ public:
   bool remove(int chave);
 
   void limpa(); // remove todos elementos da árvore
-  
+
 private:
   No *raiz;
 
   void escreve_ordenado(No *x); // escreve em percurso em-ordem
   void escreve(const string& prefixo, No *x);
-  
+
   No *busca(No *x, int k);
   No *minimo(No *x);
   No *maximo(No *x);
-  
+
   void insere(No *z);
   void transplante(No *u, No *v);
   void remove(No *z);
-  
+
   void limpa(No *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
-  
+
   void copia(const ArvBinBusca& T); // copia uma árvore T para a atual a partir da raiz,
                                     // usada no construtor de cópia e no operador de atribuição
   void copia(No *dest, No *orig);   // copia um nó e os descendentes recursivamente
@@ -68,10 +68,10 @@ int main(void)
 {
   ArvBinBusca T; // construtor ArvBinBusca()
   int v[] = {10, 25, 0, 16, 20, 9, 15, 6, 14, 7, 18, 12, 22, 19, 3, 13};
-  
+
   for (const auto &x : v)
     T.insere(x);
-  
+
   printf("T:\n");
   T.escreve();
   printf("Valores de T em ordem crescente: ");
@@ -112,7 +112,7 @@ int main(void)
   T.escreve();
 
   return 0; //TODO: remover após implementar construtor de cópia e operador de atribuição
-  
+
   ArvBinBusca T2(T); // construtor de cópia
   T2.insere(30);
   printf("T:\n");
@@ -133,7 +133,7 @@ int main(void)
   T.escreve();
   printf("T3:\n");
   T3.escreve();
-  
+
   return 0;
 }
 
@@ -195,7 +195,7 @@ void ArvBinBusca::escreve(const string& prefixo, No *x) {
 
   bool ehDireito = x->pai and x->pai->dir == x;
   bool temIrmaoEsq = x->pai and x->pai->esq;
-  
+
   printf(prefixo.c_str());
   printf(ehDireito and temIrmaoEsq ? "├──" : "└──" );
 
@@ -203,7 +203,7 @@ void ArvBinBusca::escreve(const string& prefixo, No *x) {
     x->escreve("\n");
   else
     x->escreve(ehDireito ? "d\n" : "e\n");
-  
+
   escreve(prefixo + (ehDireito and temIrmaoEsq ? "│   " : "    "), x->dir);
   escreve(prefixo + (ehDireito and temIrmaoEsq ? "│   " : "    "), x->esq);
 }
