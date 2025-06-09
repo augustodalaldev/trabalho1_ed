@@ -218,6 +218,13 @@ No *ArvBinBusca::busca(int k) {
 
 No *ArvBinBusca::busca(No *x, int k) {
   //TODO: implementar
+  if(x == NULL || x->chave == k)
+    return x;
+  
+  if(k < x->chave)
+    return busca(x->esq, k);
+
+  return busca(x->dir, k);
 }
 
 No *ArvBinBusca::minimo() {
@@ -234,6 +241,10 @@ No *ArvBinBusca::maximo() {
 
 No *ArvBinBusca::maximo(No *x) {
   //TODO: implementar
+  while(x->dir != NULL)
+    x = x->dir;
+
+  return x;
 }
 
 No *ArvBinBusca::sucessor(No *x) {
@@ -242,6 +253,14 @@ No *ArvBinBusca::sucessor(No *x) {
 
 No *ArvBinBusca::predecessor(No *x) {
   //TODO: implementar
+  if(x->esq != NULL)
+    return maximo(x->esq);
+  
+  No *aux = x->pai;
+  while(aux != NULL && aux->esq == x)
+    x = aux;
+    aux = aux->pai;
+  return aux;
 }
 
 void ArvBinBusca::insere(int chave) {
@@ -255,6 +274,18 @@ void ArvBinBusca::insere(No *z) {
 
 void ArvBinBusca::transplante(No *u, No *v) {
   //TODO: implementar
+  if(u->pai == NULL)
+    this->raiz = v;
+  else{
+    if(u = u->pai->esq)
+      u->pai->esq = v;
+    else
+      u->pai->dir = v;
+  }
+
+  if(v != NULL)
+    v->pai = u->pai;
+
 }
 
 bool ArvBinBusca::remove(int chave) {
@@ -278,6 +309,11 @@ void ArvBinBusca::limpa() {
 
 void ArvBinBusca::limpa(No *x) {
   //TODO: implementar
+  if(x != NULL){
+    limpa(x->esq);
+    limpa(x->dir);
+    delete x;
+  }
 }
 
 void ArvBinBusca::copia(const ArvBinBusca& T) {
