@@ -104,9 +104,10 @@ int main(void)
   //return 0; //TODO: remover após implementar remoção
 
 
-  T.remove(0); // Caso 1
-  T.remove(13); // Caso 2
-  T.remove(10); // Caso 3b + 3a
+  //T.remove(0); // Caso 1
+  //T.remove(13); // Caso 2
+  //T.remove(10); // Caso 3b + 3a
+  T.remove(25);
 
   printf("T:\n");
   T.escreve();
@@ -257,6 +258,7 @@ No *ArvBinBusca::maximo(No *x) {
 }
 
 No *ArvBinBusca::sucessor(No *x) {
+  //TODO: implementar
   if(x->dir != NULL)
     return minimo(x->dir);
 
@@ -275,8 +277,10 @@ No *ArvBinBusca::predecessor(No *x) {
 
   No *aux = x->pai;
   while(aux != NULL && aux->esq == x)
-    x = aux;
-    aux = aux->pai;
+    {
+        x = aux;
+        aux = aux->pai;
+    }
   return aux;
 }
 
