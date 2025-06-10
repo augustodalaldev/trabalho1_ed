@@ -104,9 +104,9 @@ int main(void)
   //return 0; //TODO: remover após implementar remoção
 
 
-  //T.remove(0); // Caso 1
-  //T.remove(13); // Caso 2
-  //T.remove(10); // Caso 3b + 3a
+  T.remove(0); // Caso 1
+  T.remove(13); // Caso 2
+  T.remove(10); // Caso 3b + 3a
   T.remove(25);
 
   printf("T:\n");
@@ -321,7 +321,7 @@ void ArvBinBusca::transplante(No *u, No *v) {
   if(u->pai == NULL)
     this->raiz = v;
   else{
-    if(u = u->pai->esq)
+    if(u == u->pai->esq)
       u->pai->esq = v;
     else
       u->pai->dir = v;
@@ -347,29 +347,28 @@ void ArvBinBusca::remove(No *z) {
 
   // caso 1: sem filho esquerdo
   if (z->esq == NULL) {
-    printf("ta chegando aqui o 13? %d\n", z->chave);
     transplante(z, z->dir);
   }
 
-  // caso 2: sem filho direito
-  else if (z->dir == NULL) {
-    transplante(z, z->esq);
-  }
+  else
+    {
+    if(z->dir == NULL) // caso 2: sem filho direito
+        transplante(z, z->esq);
 
-  // caso 3: dois filhos
-  else {
-    No *y = minimo(z->dir);  // sucessor de z
+    else //caso 3
+    {
+        No *y = minimo(z->dir);  // sucessor de z
+        if(y->pai != z) //caso 3b + 3a;
+        {
+            transplante(y, y->dir);
+            y->dir = z->dir;
+            y->dir->pai = y;
+        }
+        transplante(z,y);
+        y->esq = z->esq;
+        y->esq->pai = y;
 
-    if (y->pai != z) {
-      // substitui y pelo seu sucessor
-      transplante(y, y->dir);
-      y->dir = z->dir;
-      if (y->dir != NULL) y->dir->pai = y;
     }
-
-    transplante(z, y);
-    y->esq = z->esq;
-    if (y->esq != NULL) y->esq->pai = y;
   }
 
 }
