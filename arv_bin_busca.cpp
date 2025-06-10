@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <string>
-// testando oi oi
 using std::string;
 
 class No {
@@ -77,7 +76,7 @@ int main(void)
   printf("Valores de T em ordem crescente: ");
   T.escreve_ordenado();
 
-  return 0; //TODO: remover após implementar minimo, maximo, sucessor, predecessor
+  //return 0; //TODO: remover após implementar minimo, maximo, sucessor, predecessor
 
   No *raiz = T.get_raiz();
   printf("Raiz: ");
@@ -102,7 +101,8 @@ int main(void)
   printf("Máximo: ");
   maximo->escreve("\n");
 
-  return 0; //TODO: remover após implementar remoção
+  //return 0; //TODO: remover após implementar remoção
+
 
   T.remove(0); // Caso 1
   T.remove(13); // Caso 2
@@ -110,7 +110,7 @@ int main(void)
 
   printf("T:\n");
   T.escreve();
-
+  T.escreve_ordenado();
   return 0; //TODO: remover após implementar construtor de cópia e operador de atribuição
 
   ArvBinBusca T2(T); // construtor de cópia
@@ -183,6 +183,11 @@ void ArvBinBusca::escreve_ordenado() {
 
 void ArvBinBusca::escreve_ordenado(No *x) {
   //TODO: implementar (escrever em percurso em-ordem em uma única linha)
+  if(x != NULL){
+    escreve_ordenado(x->esq);
+    printf("%d ", x->chave);
+    escreve_ordenado(x->dir);
+    }
 }
 
 void ArvBinBusca::escreve() {
@@ -220,7 +225,7 @@ No *ArvBinBusca::busca(No *x, int k) {
   //TODO: implementar
   if(x == NULL || x->chave == k)
     return x;
-  
+
   if(k < x->chave)
     return busca(x->esq, k);
 
@@ -233,6 +238,10 @@ No *ArvBinBusca::minimo() {
 
 No *ArvBinBusca::minimo(No *x) {
   //TODO: implementar
+  while(x->esq != NULL)
+    x = x->esq;
+
+  return x;
 }
 
 No *ArvBinBusca::maximo() {
@@ -248,14 +257,22 @@ No *ArvBinBusca::maximo(No *x) {
 }
 
 No *ArvBinBusca::sucessor(No *x) {
-  //TODO: implementar
+  if(x->dir != NULL)
+    return minimo(x->dir);
+
+  No *y = x->pai;
+  while(y != NULL && x == y->dir){
+    x = y;
+    y = y->pai;
+  }
+  return y;
 }
 
 No *ArvBinBusca::predecessor(No *x) {
   //TODO: implementar
   if(x->esq != NULL)
     return maximo(x->esq);
-  
+
   No *aux = x->pai;
   while(aux != NULL && aux->esq == x)
     x = aux;
@@ -270,6 +287,29 @@ void ArvBinBusca::insere(int chave) {
 
 void ArvBinBusca::insere(No *z) {
   //TODO: implementar
+
+  No* y = NULL;
+  No* x = raiz;
+ // percorre até achar a posição para inserir o novo nó z. por que nosso mano z vai ser raiz.
+  while (x != NULL){
+    y = x;
+    if(z->chave < x->chave)
+        x = x->esq;
+    else
+        x = x->dir;
+  }
+
+  z->pai = y; //y é o pai de z.
+
+  if(y == NULL) //se isso ocorreu era pq a arvore era vazia
+    raiz = z;
+  else{
+    if(z->chave < y->chave)
+        y->esq = z;
+    else
+        y->dir = z;
+  }
+
 }
 
 void ArvBinBusca::transplante(No *u, No *v) {
@@ -300,6 +340,34 @@ bool ArvBinBusca::remove(int chave) {
 
 void ArvBinBusca::remove(No *z) {
   //TODO: implementar
+
+  // caso 1: sem filho esquerdo
+  if (z->esq == NULL) {
+    printf("ta chegando aqui o 13? %d\n", z->chave);
+    transplante(z, z->dir);
+  }
+
+  // caso 2: sem filho direito
+  else if (z->dir == NULL) {
+    transplante(z, z->esq);
+  }
+
+  // caso 3: dois filhos
+  else {
+    No *y = minimo(z->dir);  // sucessor de z
+
+    if (y->pai != z) {
+      // substitui y pelo seu sucessor
+      transplante(y, y->dir);
+      y->dir = z->dir;
+      if (y->dir != NULL) y->dir->pai = y;
+    }
+
+    transplante(z, y);
+    y->esq = z->esq;
+    if (y->esq != NULL) y->esq->pai = y;
+  }
+
 }
 
 void ArvBinBusca::limpa() {
