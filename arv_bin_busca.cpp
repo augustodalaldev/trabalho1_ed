@@ -290,7 +290,7 @@ void ArvBinBusca::insere(No *z) {
 
   No* y = NULL;
   No* x = raiz;
- // percorre até achar a posição para inserir o novo nó z. por que nosso mano z vai ser raiz.
+ // percorre até achar a posição para inserir o novo nó z. por que nosso mano z vai ser folha.
   while (x != NULL){
     y = x;
     if(z->chave < x->chave)
