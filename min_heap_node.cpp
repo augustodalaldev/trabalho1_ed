@@ -16,15 +16,14 @@ public:
   ~MinHeapNode();
   void escreve_niveis();
   void escreve(const string& prefixo = "", int i = 0);
-  void insere(int freq);
-  int consulta_minima();
-  int extrai_minima();
+  void insere(const int freq);
   void altera_prioridade(int i, int p);
+  Node consulta_minima();
+  Node extrai_minima();
 
-  
 private:
   //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
-  vector<int> S;
+  vector<Node> S;
 
   int pai(int i);
   int esquerdo(int i);
@@ -33,6 +32,7 @@ private:
   void desce(int i);
   void sobe(int i);
 
+  void insere(Node n);
 };
 
 
@@ -103,7 +103,7 @@ void MinHeapNode::escreve_niveis() {
   int escritos = 0, fim_nivel = 1;
 
   for(auto const& elemento: S) {
-    printf("%d ", elemento);
+    printf("(%df, %dby) ", elemento.freq, elemento.byte);
     if (++escritos == fim_nivel) {
       putchar('\n');
       fim_nivel *= 2;
@@ -121,7 +121,7 @@ void MinHeapNode::escreve(const string& prefixo, int i) {
     printf(prefixo.c_str());
     printf(ehEsquerdo and temIrmao ? "├──" : "└──" );
 
-    printf("%d\n", S[i]);
+    printf("(%df,%dby)\n", S[i].freq, S[i].byte);
       
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), esquerdo(i));
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), direito(i));
@@ -141,7 +141,7 @@ int MinHeapNode::direito(int i) {
 }
 
 void MinHeapNode::troca(int i, int j) {
-  int aux = S[i];
+  Node aux = S[i];
   S[i] = S[j];
   S[j] = aux;
 }
@@ -150,11 +150,11 @@ void MinHeapNode::desce(int i) {
   int e, d, menor;
   e = esquerdo(i);
   d = direito(i);
-  if (e < (int) S.size() && S[e] < S[i])
+  if (e < (int) S.size() && S[e].freq < S[i].freq)
     menor = e;
   else
     menor = i;
-  if (d < (int) S.size() && S[d] < S[menor])
+  if (d < (int) S.size() && S[d].freq < S[menor].freq)
     menor = d;
   if (menor != i) {
     troca(i, menor);
@@ -163,25 +163,30 @@ void MinHeapNode::desce(int i) {
 }
 
 void MinHeapNode::sobe(int i) {
-  while (S[pai(i)] > S[i]) {
+  while (S[pai(i)].freq > S[i].freq) {
     troca(i, pai(i));
     i = pai(i);
   }
 }
 
-void MinHeapNode::insere(int p) {
-  S.push_back(p);
+void MinHeapNode::insere(const int p) {
+  Node newNode = Node(p);
+  S.push_back(newNode);
   sobe(S.size() - 1);
 }
 
-int MinHeapNode::consulta_minima() {
+void MinHeapNode::insere(Node n) {
+  S.push_back(n);
+  sobe(S.size() - 1);
+}
+
+Node MinHeapNode::consulta_minima() {
   return S[0];
 }
 
-int MinHeapNode::extrai_minima() {
-  int menor;
+Node MinHeapNode::extrai_minima() {
+  Node menor = S[0];
   if (S.size() > 0) {
-    menor = S[0]; // ou S.front()
     S[0] = S.back(); // ou S[S.size()-1]
     S.pop_back();
     desce(0);
@@ -192,8 +197,8 @@ int MinHeapNode::extrai_minima() {
 }
 
 void MinHeapNode::altera_prioridade(int i, int p) {
-  int antiga = S[i];
-  S[i] = p;
+  int antiga = S[i].freq;
+  S[i].freq = p;
   if (p > antiga)
     desce(i);
   else
