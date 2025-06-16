@@ -1,5 +1,5 @@
-#ifndef NO_H
-#define NO_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <cstdint>
 #include <cstdio>
@@ -25,4 +25,4 @@ private:
 };
 
 
-#endif // NO_H
+#endif // NODE_H

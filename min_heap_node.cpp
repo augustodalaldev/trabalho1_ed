@@ -1,41 +1,6 @@
-#include <cstdio>
-#include <climits>
-#include <string>
-#include <vector>
+#include "min_heap_node.h"
 
-using std::string;
-using std::vector;
-
-#include "node.h"
-
-class MinHeapNode
-{
-public:
-  MinHeapNode();
-  MinHeapNode(int n, int dados[]);
-  ~MinHeapNode();
-  void escreve_niveis();
-  void escreve(const string& prefixo = "", int i = 0);
-  void insere(const int freq);
-  void altera_prioridade(int i, int p);
-  Node consulta_minima();
-  Node extrai_minima();
-
-private:
-  //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
-  vector<Node> S;
-
-  int pai(int i);
-  int esquerdo(int i);
-  int direito(int i);
-  void troca(int i, int j);
-  void desce(int i);
-  void sobe(int i);
-
-  void insere(Node n);
-};
-
-
+//Apagar dps
 int main(void)
 {
   MinHeapNode h; // construtor MinHeapNode()
@@ -175,8 +140,8 @@ void MinHeapNode::insere(const int p) {
   sobe(S.size() - 1);
 }
 
-void MinHeapNode::insere(Node n) {
-  S.push_back(n);
+void MinHeapNode::insere(Node* n) {
+  S.push_back(*n);
   sobe(S.size() - 1);
 }
 
