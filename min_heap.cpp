@@ -8,17 +8,17 @@ using std::vector;
 
 #include "no.h"
 
-class Heap
+class MinHeap
 {
 public:
-  Heap();
-  Heap(int n, int dados[]);
-  ~Heap();
+  MinHeap();
+  MinHeap(int n, int dados[]);
+  ~MinHeap();
   void escreve_niveis();
   void escreve(const string& prefixo = "", int i = 0);
   void insere(int p);
-  int consulta_maxima();
-  int extrai_maxima();
+  int consulta_minima();
+  int extrai_minima();
   void altera_prioridade(int i, int p);
 
   
@@ -37,31 +37,31 @@ private:
 
 int main(void)
 {
-  Heap h; // construtor Heap()
+  MinHeap h; // construtor MinHeap()
   
-  for (int i = 1; i <= 10; i++)
+  for (int i = 10; i > 5; i--)
     h.insere(i);
   printf("h:\n");
   h.escreve();
 
-  h.extrai_maxima();
-  h.altera_prioridade(0, -3);
+  h.extrai_minima();
+  h.altera_prioridade(0, 20);
   printf("h:\n");
   h.escreve();
 
   int v[] = {1,2,3,4,5};
   
-  Heap h2(5, v); // construtor Heap(int n, int dados[])
+  MinHeap h2(5, v); // construtor MinHeap(int n, int dados[])
   h2.insere(15);
   printf("h2:\n");
   h2.escreve();
 
-  Heap h3(h2); // construtor de cópia padrão
+  MinHeap h3(h2); // construtor de cópia padrão
   h2.insere(30);
   printf("h3:\n");
   h3.escreve();
 
-  Heap h4 = h2; // construtor de cópia padrão
+  MinHeap h4 = h2; // construtor de cópia padrão
   h2.insere(40);
   printf("h4:\n");
   h4.escreve();
@@ -73,11 +73,11 @@ int main(void)
   printf("h:\n");
   h.escreve();
 
-  h = Heap(5, v); // construtor Heap(int n, int dados[]), seguido de atribuição (de cópia, não transferência (move))
+  h = MinHeap(5, v); // construtor MinHeap(int n, int dados[]), seguido de atribuição (de cópia, não transferência (move))
   printf("h:\n");
   h.escreve();
   
-  h.extrai_maxima();
+  h.extrai_minima();
   h.altera_prioridade(0, -2);
   printf("h:\n");
   h.escreve();
@@ -85,86 +85,23 @@ int main(void)
   return 0;
 }
 
-/*
 
-Heap h2(5, v);  // o construtor é usado para construir h2
-Heap h3(h2);    // o construtor de cópia é usado para construir h3
-Heap h4 = h3;   // o construtor de cópia é usado para inicializar um objeto quando há uma atribuição SIMULTÂNEA com a declaração
-h = h2;         // o operador de atribuição (cópia) é utilizado (não algum construtor ou transferência)
-h = Heap(5, v); // o construtor é usado para construir uma variável temporária, e depois o operação de atribuição (cópia?) é utilizado
-
-** Quando são feitas cópias de objetos **
-
-O C++ chama um construtor de cópia para fazer uma cópia de um objeto
-conforme descrito nos casos acima. Se não houver um construtor de
-cópias definido para a classe, o C ++ definirá um construtor de cópias
-padrão, que copia cada campo (utilizando o construtor de cópia de cada
-campo, se for o caso).
-
-
-** Não escreva um construtor de cópias a menos que necessário **
-
-Se o objeto não tiver ponteiros para a memória alocada dinâmicamente,
-uma cópia "superficial" provavelmente será suficiente. Portanto, o
-construtor de cópia padrão, o operador de atribuição padrão e o
-destruidor padrão estão ok e você não precisa escrever seus próprios.
-
-
-** Se você precisar de um construtor de cópias, também precisará de um **
-** destruidor e um operador de atribuição (operator=) **
-
-Se você precisa de um construtor de cópias, é porque precisa de algo
-como uma cópia profunda ou algum outro gerenciamento de
-recursos. Assim, é quase certo que você precisará definir um destruidor e
-um operador de atribuição.
-
-
-** Diferença entre construtor de cópia e atribuição **
-
-Um construtor de cópia é usado para inicializar uma variável EM SUA
-DECLARAÇÃO a partir de uma variável existente. É parecido com a
-atribuição, mas mais simples:
-
-1. Não há necessidade de testar para ver se ele está sendo inicializado por si mesmo
-2. Não há necessidade de limpar (por exemplo, excluir) um valor existente (não há nenhum)
-3. Uma referência a si mesma não é devolvida.
-
-
-** Transferência **
-
-Na maioria das vezes, o construtor de transferência ou o operador de
-atribuição de trasnferência não são fornecidos pelo compilador. Se
-forem, eles farão o mesmo que os construtores/operadores de cópia.
-
-Regra: se você deseja um construtor de transferência e uma atribuição
-de transferência que realmente realize a transferência de dados, você
-terá que escrevê-los
-
-*/
-
-
-//*************************************
-//*** IMPLEMENTAÇÕES DA CLASSE HEAP ***
-//*************************************
-
-Heap::Heap() {
+MinHeap::MinHeap() {
 }
 
-Heap::Heap(int n, int dados[]) :
+MinHeap::MinHeap(int n, int dados[]) :
   S(dados, dados + n) {
-  //TODO: implementar (constroi_max_heap)
   for (int i = n/2 - 1; i >= 0; i--)
     desce(i);
 }
 
-Heap::~Heap() {
+MinHeap::~MinHeap() {
 }
 
-void Heap::escreve_niveis() {
+void MinHeap::escreve_niveis() {
   int escritos = 0, fim_nivel = 1;
 
   for(auto const& elemento: S) {
-  // Equivalente a for (unsigned i = 0; i < S.size(); i++) { printf("%d ", S[i]);
     printf("%d ", elemento);
     if (++escritos == fim_nivel) {
       putchar('\n');
@@ -175,7 +112,7 @@ void Heap::escreve_niveis() {
   putchar('\n');
 }
 
-void Heap::escreve(const string& prefixo, int i) {
+void MinHeap::escreve(const string& prefixo, int i) {
   if (i < (int) S.size()) {
     bool ehEsquerdo = i % 2 != 0;
     bool temIrmao = i < (int) S.size()-1;
@@ -190,77 +127,73 @@ void Heap::escreve(const string& prefixo, int i) {
   }
 }
 
-int Heap::pai(int i) {
+int MinHeap::pai(int i) {
   return (i - 1) / 2;
 }
 
-int Heap::esquerdo(int i) {
+int MinHeap::esquerdo(int i) {
   return 2 * (i + 1) - 1;
 }
 
-int Heap::direito(int i) {
+int MinHeap::direito(int i) {
   return 2 * (i + 1);
 }
 
-void Heap::troca(int i, int j) {
+void MinHeap::troca(int i, int j) {
   int aux = S[i];
   S[i] = S[j];
   S[j] = aux;
 }
 
-void Heap::desce(int i) {
-  //TODO: implementar
-  int e, d, maior;
+void MinHeap::desce(int i) {
+  int e, d, menor;
   e = esquerdo(i);
   d = direito(i);
-  if (e < (int) S.size() && S[e] > S[i])
-    maior = e;
+  if (e < (int) S.size() && S[e] < S[i])
+    menor = e;
   else
-    maior = i;
-  if (d < (int) S.size() && S[d] > S[maior])
-    maior = d;
-  if (maior != i) {
-    troca(i, maior);
-    desce(maior);
+    menor = i;
+  if (d < (int) S.size() && S[d] < S[menor])
+    menor = d;
+  if (menor != i) {
+    troca(i, menor);
+    desce(menor);
   }
 }
 
-void Heap::sobe(int i) {
-  while (S[pai(i)] < S[i]) {
+void MinHeap::sobe(int i) {
+  while (S[pai(i)] > S[i]) {
     troca(i, pai(i));
     i = pai(i);
   }
 }
 
-void Heap::insere(int p) {
+void MinHeap::insere(int p) {
   S.push_back(p);
-  sobe(S.size()-1);
+  sobe(S.size() - 1);
 }
 
-int Heap::consulta_maxima() {
-  //TODO: implementar
+int MinHeap::consulta_minima() {
   return S[0];
 }
 
-int Heap::extrai_maxima() {
-  //TODO: implementar
-  int maior;
+int MinHeap::extrai_minima() {
+  int menor;
   if (S.size() > 0) {
-    maior = S[0]; // ou S.front()
+    menor = S[0]; // ou S.front()
     S[0] = S.back(); // ou S[S.size()-1]
     S.pop_back();
     desce(0);
-    return maior;
+    return menor;
   }
   else
     return INT_MIN;
 }
 
-void Heap::altera_prioridade(int i, int p) {
-  //TODO: implementar
+void MinHeap::altera_prioridade(int i, int p) {
   int antiga = S[i];
   S[i] = p;
-  if (p < antiga)
+  if (p > antiga)
     desce(i);
   else
     sobe(i);
