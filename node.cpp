@@ -1,6 +1,6 @@
 #include "no.h"
 
-No::No(const uint8_t byte, const int freq) :
+Node::Node(const uint8_t byte, const int freq) :
     byte(byte),
     freq(freq),
     pai(NULL),
@@ -8,7 +8,7 @@ No::No(const uint8_t byte, const int freq) :
     dir(NULL) {
 }
 
-No::No(const int freq) :
+Node::Node(const int freq) :
     byte(0),
     freq(freq),
     pai(NULL),
@@ -17,6 +17,6 @@ No::No(const int freq) :
 }
 
 
-void No::escreve(const char *sep) {
+void Node::escreve(const char *sep) {
   printf("%2d%s", freq, sep);
 }

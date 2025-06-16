@@ -7,21 +7,21 @@
 class ArvBinBusca;
 class Heap;
 
-class No {
+class Node {
   friend class ArvBinBusca;
-  friend class MinHeap;
+  friend class MinHeapNode;
 
 public:
-  No(const uint8_t byte, const int freq);
-  No(const int freq);
+  Node(const uint8_t byte, const int freq);
+  Node(const int freq);
   void escreve(const char *sep = "");
 
 private:
     uint8_t byte;
     int freq;
-    No *pai;
-    No *esq;
-    No *dir;
+    Node *pai;
+    Node *esq;
+    Node *dir;
 };
 
 
