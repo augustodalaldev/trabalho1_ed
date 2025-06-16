@@ -15,14 +15,14 @@ int main(void)
 
   //return 0; //TODO: remover após implementar minimo, maximo, sucessor, predecessor
 
-  No *raiz = T.get_raiz();
+  Node *raiz = T.get_raiz();
   printf("Raiz: ");
   raiz->escreve("\n");
 
-  No *pre = T.predecessor(raiz);
+  Node *pre = T.predecessor(raiz);
   printf("Predecessor da raiz: ");
   pre->escreve("\n");
-  No *suc = T.sucessor(raiz);
+  Node *suc = T.sucessor(raiz);
   printf("Sucessor da raiz: ");
   suc->escreve("\n");
 
@@ -31,8 +31,8 @@ int main(void)
   printf("Predecessor do sucessor da raiz (== raiz): ");
   T.predecessor(suc)->escreve("\n");
 
-  No *minimo = T.minimo();
-  No *maximo = T.maximo();
+  Node *minimo = T.minimo();
+  Node *maximo = T.maximo();
   printf("Mínimo: ");
   minimo->escreve("\n");
   printf("Máximo: ");
@@ -102,7 +102,7 @@ void ArvBinBusca::escreve_ordenado() {
   putchar('\n');
 }
 
-void ArvBinBusca::escreve_ordenado(No *x) {
+void ArvBinBusca::escreve_ordenado(Node *x) {
   //TODO: implementar (escrever em percurso em-ordem em uma única linha)
   if(x != NULL){
     escreve_ordenado(x->esq);
@@ -115,7 +115,7 @@ void ArvBinBusca::escreve() {
   escreve("", raiz);
 }
 
-void ArvBinBusca::escreve(const string& prefixo, No *x) {
+void ArvBinBusca::escreve(const string& prefixo, Node *x) {
   if (x == NULL)
     return;
 
@@ -134,15 +134,15 @@ void ArvBinBusca::escreve(const string& prefixo, No *x) {
   escreve(prefixo + (ehDireito and temIrmaoEsq ? "│   " : "    "), x->esq);
 }
 
-No *ArvBinBusca::get_raiz() {
+Node *ArvBinBusca::get_raiz() {
   return raiz;
 }
 
-No *ArvBinBusca::busca(int k) {
+Node *ArvBinBusca::busca(int k) {
   return busca(raiz, k);
 }
 
-No *ArvBinBusca::busca(No *x, int k) {
+Node *ArvBinBusca::busca(Node *x, int k) {
   //TODO: implementar
   if(x == NULL || x->freq == k)
     return x;
@@ -153,11 +153,11 @@ No *ArvBinBusca::busca(No *x, int k) {
   return busca(x->dir, k);
 }
 
-No *ArvBinBusca::minimo() {
+Node *ArvBinBusca::minimo() {
   return raiz ? minimo(raiz) : NULL;
 }
 
-No *ArvBinBusca::minimo(No *x) {
+Node *ArvBinBusca::minimo(Node *x) {
   //TODO: implementar
   while(x->esq != NULL)
     x = x->esq;
@@ -165,11 +165,11 @@ No *ArvBinBusca::minimo(No *x) {
   return x;
 }
 
-No *ArvBinBusca::maximo() {
+Node *ArvBinBusca::maximo() {
   return raiz ? maximo(raiz) : NULL;
 }
 
-No *ArvBinBusca::maximo(No *x) {
+Node *ArvBinBusca::maximo(Node *x) {
   //TODO: implementar
   while(x->dir != NULL)
     x = x->dir;
@@ -177,12 +177,12 @@ No *ArvBinBusca::maximo(No *x) {
   return x;
 }
 
-No *ArvBinBusca::sucessor(No *x) {
+Node *ArvBinBusca::sucessor(Node *x) {
   //TODO: implementar
   if(x->dir != NULL)
     return minimo(x->dir);
 
-  No *y = x->pai;
+  Node *y = x->pai;
   while(y != NULL && x == y->dir){
     x = y;
     y = y->pai;
@@ -190,12 +190,12 @@ No *ArvBinBusca::sucessor(No *x) {
   return y;
 }
 
-No *ArvBinBusca::predecessor(No *x) {
+Node *ArvBinBusca::predecessor(Node *x) {
   //TODO: implementar
   if(x->esq != NULL)
     return maximo(x->esq);
 
-  No *aux = x->pai;
+  Node *aux = x->pai;
   while(aux != NULL && aux->esq == x)
     {
         x = aux;
@@ -205,15 +205,15 @@ No *ArvBinBusca::predecessor(No *x) {
 }
 
 void ArvBinBusca::insere(int freq) {
-  No *z = new No(freq);
+  Node *z = new Node(freq);
   insere(z);
 }
 
-void ArvBinBusca::insere(No *z) {
+void ArvBinBusca::insere(Node *z) {
   //TODO: implementar
 
-  No* y = NULL;
-  No* x = raiz;
+  Node* y = NULL;
+  Node* x = raiz;
  // percorre até achar a posição para inserir o novo nó z. por que nosso mano z vai ser folha.
   while (x != NULL){
     y = x;
@@ -236,7 +236,7 @@ void ArvBinBusca::insere(No *z) {
 
 }
 
-void ArvBinBusca::transplante(No *u, No *v) {
+void ArvBinBusca::transplante(Node *u, Node *v) {
   //TODO: implementar
   if(u->pai == NULL)
     this->raiz = v;
@@ -253,7 +253,7 @@ void ArvBinBusca::transplante(No *u, No *v) {
 }
 
 bool ArvBinBusca::remove(int freq) {
-  No *z = busca(raiz, freq);
+  Node *z = busca(raiz, freq);
   if (z == NULL)
     return false;
 
@@ -262,7 +262,7 @@ bool ArvBinBusca::remove(int freq) {
   return true;
 }
 
-void ArvBinBusca::remove(No *z) {
+void ArvBinBusca::remove(Node *z) {
   //TODO: implementar
 
   // caso 1: sem filho esquerdo
@@ -277,7 +277,7 @@ void ArvBinBusca::remove(No *z) {
 
     else //caso 3
     {
-        No *y = minimo(z->dir);  // sucessor de z
+        Node *y = minimo(z->dir);  // sucessor de z
         if(y->pai != z) //caso 3b + 3a;
         {
             transplante(y, y->dir);
@@ -298,7 +298,7 @@ void ArvBinBusca::limpa() {
   raiz = NULL;
 }
 
-void ArvBinBusca::limpa(No *x) {
+void ArvBinBusca::limpa(Node *x) {
   //TODO: implementar
   if(x != NULL){
     limpa(x->esq);
@@ -311,12 +311,12 @@ void ArvBinBusca::copia(const ArvBinBusca& T) {
   if (T.raiz == NULL)
     raiz = NULL;
   else {
-    raiz = new No(T.raiz->freq);
+    raiz = new Node(T.raiz->freq);
     copia(raiz, T.raiz);
   }
 }
 
-void ArvBinBusca::copia(No *dest, No *orig) {
+void ArvBinBusca::copia(Node *dest, Node *orig) {
   //TODO: implementar
 }
 

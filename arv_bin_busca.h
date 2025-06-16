@@ -3,7 +3,7 @@
 using std::string;
 
 //Nó
-#include "no.h";
+#include "node.h";
 
 class ArvBinBusca
 {
@@ -16,12 +16,12 @@ public:
   void escreve_ordenado(); // escreve em percurso em-ordem
   void escreve();
 
-  No *get_raiz(); // devolve a raiz
-  No *busca(int k); // devolve o ponteiro para um elemento, se achar, ou NULL
-  No *minimo(); // devolve o menor elemento da árvore
-  No *maximo(); // devolve o maior elemento da árvore
-  No *sucessor(No *x); // devolve o sucessor de um elemento
-  No *predecessor(No *x); // devolve o predecessor de um elemento
+  Node *get_raiz(); // devolve a raiz
+  Node *busca(int k); // devolve o ponteiro para um elemento, se achar, ou NULL
+  Node *minimo(); // devolve o menor elemento da árvore
+  Node *maximo(); // devolve o maior elemento da árvore
+  Node *sucessor(Node *x); // devolve o sucessor de um elemento
+  Node *predecessor(Node *x); // devolve o predecessor de um elemento
 
   void insere(int freq);
   bool remove(int freq);
@@ -29,22 +29,22 @@ public:
   void limpa(); // remove todos elementos da árvore
 
 private:
-  No *raiz;
+  Node *raiz;
 
-  void escreve_ordenado(No *x); // escreve em percurso em-ordem
-  void escreve(const string& prefixo, No *x);
+  void escreve_ordenado(Node *x); // escreve em percurso em-ordem
+  void escreve(const string& prefixo, Node *x);
 
-  No *busca(No *x, int k);
-  No *minimo(No *x);
-  No *maximo(No *x);
+  Node *busca(Node *x, int k);
+  Node *minimo(Node *x);
+  Node *maximo(Node *x);
 
-  void insere(No *z);
-  void transplante(No *u, No *v);
-  void remove(No *z);
+  void insere(Node *z);
+  void transplante(Node *u, Node *v);
+  void remove(Node *z);
 
-  void limpa(No *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
+  void limpa(Node *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
 
   void copia(const ArvBinBusca& T); // copia uma árvore T para a atual a partir da raiz,
                                     // usada no construtor de cópia e no operador de atribuição
-  void copia(No *dest, No *orig);   // copia um nó e os descendentes recursivamente
+  void copia(Node *dest, Node *orig);   // copia um nó e os descendentes recursivamente
 };

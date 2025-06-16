@@ -1,43 +1,9 @@
-#include <cstdio>
-#include <climits>
-#include <string>
-#include <vector>
+#include "min_heap_node.h"
 
-using std::string;
-using std::vector;
-
-#include "no.h"
-
-class MinHeap
-{
-public:
-  MinHeap();
-  MinHeap(int n, int dados[]);
-  ~MinHeap();
-  void escreve_niveis();
-  void escreve(const string& prefixo = "", int i = 0);
-  void insere(int p);
-  int consulta_minima();
-  int extrai_minima();
-  void altera_prioridade(int i, int p);
-
-  
-private:
-  //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
-  vector<int> S;
-
-  int pai(int i);
-  int esquerdo(int i);
-  int direito(int i);
-  void troca(int i, int j);
-  void desce(int i);
-  void sobe(int i);
-};
-
-
+//Apagar dps
 int main(void)
 {
-  MinHeap h; // construtor MinHeap()
+  MinHeapNode h; // construtor MinHeapNode()
   
   for (int i = 10; i > 5; i--)
     h.insere(i);
@@ -51,17 +17,17 @@ int main(void)
 
   int v[] = {1,2,3,4,5};
   
-  MinHeap h2(5, v); // construtor MinHeap(int n, int dados[])
+  MinHeapNode h2(5, v); // construtor MinHeapNode(int n, int dados[])
   h2.insere(15);
   printf("h2:\n");
   h2.escreve();
 
-  MinHeap h3(h2); // construtor de cópia padrão
+  MinHeapNode h3(h2); // construtor de cópia padrão
   h2.insere(30);
   printf("h3:\n");
   h3.escreve();
 
-  MinHeap h4 = h2; // construtor de cópia padrão
+  MinHeapNode h4 = h2; // construtor de cópia padrão
   h2.insere(40);
   printf("h4:\n");
   h4.escreve();
@@ -73,7 +39,7 @@ int main(void)
   printf("h:\n");
   h.escreve();
 
-  h = MinHeap(5, v); // construtor MinHeap(int n, int dados[]), seguido de atribuição (de cópia, não transferência (move))
+  h = MinHeapNode(5, v); // construtor MinHeapNode(int n, int dados[]), seguido de atribuição (de cópia, não transferência (move))
   printf("h:\n");
   h.escreve();
   
@@ -86,23 +52,23 @@ int main(void)
 }
 
 
-MinHeap::MinHeap() {
+MinHeapNode::MinHeapNode() {
 }
 
-MinHeap::MinHeap(int n, int dados[]) :
+MinHeapNode::MinHeapNode(int n, int dados[]) :
   S(dados, dados + n) {
   for (int i = n/2 - 1; i >= 0; i--)
     desce(i);
 }
 
-MinHeap::~MinHeap() {
+MinHeapNode::~MinHeapNode() {
 }
 
-void MinHeap::escreve_niveis() {
+void MinHeapNode::escreve_niveis() {
   int escritos = 0, fim_nivel = 1;
 
   for(auto const& elemento: S) {
-    printf("%d ", elemento);
+    printf("(%df, %dby) ", elemento.freq, elemento.byte);
     if (++escritos == fim_nivel) {
       putchar('\n');
       fim_nivel *= 2;
@@ -112,7 +78,7 @@ void MinHeap::escreve_niveis() {
   putchar('\n');
 }
 
-void MinHeap::escreve(const string& prefixo, int i) {
+void MinHeapNode::escreve(const string& prefixo, int i) {
   if (i < (int) S.size()) {
     bool ehEsquerdo = i % 2 != 0;
     bool temIrmao = i < (int) S.size()-1;
@@ -120,40 +86,40 @@ void MinHeap::escreve(const string& prefixo, int i) {
     printf(prefixo.c_str());
     printf(ehEsquerdo and temIrmao ? "├──" : "└──" );
 
-    printf("%d\n", S[i]);
+    printf("(%df,%dby)\n", S[i].freq, S[i].byte);
       
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), esquerdo(i));
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), direito(i));
   }
 }
 
-int MinHeap::pai(int i) {
+int MinHeapNode::pai(int i) {
   return (i - 1) / 2;
 }
 
-int MinHeap::esquerdo(int i) {
+int MinHeapNode::esquerdo(int i) {
   return 2 * (i + 1) - 1;
 }
 
-int MinHeap::direito(int i) {
+int MinHeapNode::direito(int i) {
   return 2 * (i + 1);
 }
 
-void MinHeap::troca(int i, int j) {
-  int aux = S[i];
+void MinHeapNode::troca(int i, int j) {
+  Node aux = S[i];
   S[i] = S[j];
   S[j] = aux;
 }
 
-void MinHeap::desce(int i) {
+void MinHeapNode::desce(int i) {
   int e, d, menor;
   e = esquerdo(i);
   d = direito(i);
-  if (e < (int) S.size() && S[e] < S[i])
+  if (e < (int) S.size() && S[e].freq < S[i].freq)
     menor = e;
   else
     menor = i;
-  if (d < (int) S.size() && S[d] < S[menor])
+  if (d < (int) S.size() && S[d].freq < S[menor].freq)
     menor = d;
   if (menor != i) {
     troca(i, menor);
@@ -161,26 +127,31 @@ void MinHeap::desce(int i) {
   }
 }
 
-void MinHeap::sobe(int i) {
-  while (S[pai(i)] > S[i]) {
+void MinHeapNode::sobe(int i) {
+  while (S[pai(i)].freq > S[i].freq) {
     troca(i, pai(i));
     i = pai(i);
   }
 }
 
-void MinHeap::insere(int p) {
-  S.push_back(p);
+void MinHeapNode::insere(const int p) {
+  Node newNode = Node(p);
+  S.push_back(newNode);
   sobe(S.size() - 1);
 }
 
-int MinHeap::consulta_minima() {
+void MinHeapNode::insere(Node* n) {
+  S.push_back(*n);
+  sobe(S.size() - 1);
+}
+
+Node MinHeapNode::consulta_minima() {
   return S[0];
 }
 
-int MinHeap::extrai_minima() {
-  int menor;
+Node MinHeapNode::extrai_minima() {
+  Node menor = S[0];
   if (S.size() > 0) {
-    menor = S[0]; // ou S.front()
     S[0] = S.back(); // ou S[S.size()-1]
     S.pop_back();
     desce(0);
@@ -190,9 +161,9 @@ int MinHeap::extrai_minima() {
     return INT_MIN;
 }
 
-void MinHeap::altera_prioridade(int i, int p) {
-  int antiga = S[i];
-  S[i] = p;
+void MinHeapNode::altera_prioridade(int i, int p) {
+  int antiga = S[i].freq;
+  S[i].freq = p;
   if (p > antiga)
     desce(i);
   else
