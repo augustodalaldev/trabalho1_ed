@@ -21,7 +21,7 @@ class Huffman{
 int main(void)
 {
     FILE *f = fopen("teste.txt", "rb");
-    vector<int> v(128, 0);
+    vector<int> v(256, 0);
 
     int a;
     while(fread(&a, 1, 1, f))
