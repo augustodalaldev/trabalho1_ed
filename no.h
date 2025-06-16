@@ -9,7 +9,7 @@ class Heap;
 
 class No {
   friend class ArvBinBusca;
-  friend class Heap;
+  friend class MinHeap;
 
 public:
   No(const uint8_t byte, const int freq);
