@@ -1,72 +1,9 @@
-#include <cstdio>
-#include <string>
-using std::string;
-
-class No {
-  friend class ArvBinBusca;
-
-public:
-  No(const int chave);
-
-  void escreve(const char *sep = "");
-
-private:
-  int chave;
-  No *pai;
-  No *esq;
-  No *dir;
-};
-
-
-class ArvBinBusca
-{
-public:
-  ArvBinBusca();
-  ArvBinBusca(const ArvBinBusca& outro); // construtor de cópia
-  ~ArvBinBusca();
-  ArvBinBusca& operator=(const ArvBinBusca& outro); // operador de atribuição
-
-  void escreve_ordenado(); // escreve em percurso em-ordem
-  void escreve();
-
-  No *get_raiz(); // devolve a raiz
-  No *busca(int k); // devolve o ponteiro para um elemento, se achar, ou NULL
-  No *minimo(); // devolve o menor elemento da árvore
-  No *maximo(); // devolve o maior elemento da árvore
-  No *sucessor(No *x); // devolve o sucessor de um elemento
-  No *predecessor(No *x); // devolve o predecessor de um elemento
-
-  void insere(int chave);
-  bool remove(int chave);
-
-  void limpa(); // remove todos elementos da árvore
-
-private:
-  No *raiz;
-
-  void escreve_ordenado(No *x); // escreve em percurso em-ordem
-  void escreve(const string& prefixo, No *x);
-
-  No *busca(No *x, int k);
-  No *minimo(No *x);
-  No *maximo(No *x);
-
-  void insere(No *z);
-  void transplante(No *u, No *v);
-  void remove(No *z);
-
-  void limpa(No *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
-
-  void copia(const ArvBinBusca& T); // copia uma árvore T para a atual a partir da raiz,
-                                    // usada no construtor de cópia e no operador de atribuição
-  void copia(No *dest, No *orig);   // copia um nó e os descendentes recursivamente
-};
-
+#include "arv_bin_busca.h"
 
 int main(void)
 {
   ArvBinBusca T; // construtor ArvBinBusca()
-  int v[] = {10, 25, 0, 16, 20, 9, 15, 6, 14, 7, 18, 12, 22, 19, 3, 13};
+  int v[] = {5, 4, 5, 5};
 
   for (const auto &x : v)
     T.insere(x);
@@ -104,10 +41,10 @@ int main(void)
   //return 0; //TODO: remover após implementar remoção
 
 
-  T.remove(0); // Caso 1
-  T.remove(13); // Caso 2
-  T.remove(10); // Caso 3b + 3a
-  T.remove(25);
+  T.remove(5);
+  T.remove(5);
+  T.remove(4);
+  T.remove(5);
 
   printf("T:\n");
   T.escreve();
@@ -137,23 +74,6 @@ int main(void)
 
   return 0;
 }
-
-
-//***********************************
-//*** IMPLEMENTAÇÕES DA CLASSE NO ***
-//***********************************
-
-No::No(const int chave) :
-  chave(chave),
-  pai(NULL),
-  esq(NULL),
-  dir(NULL) {
-}
-
-void No::escreve(const char *sep) {
-  printf("%2d%s", chave, sep);
-}
-
 
 //********************************************
 //*** IMPLEMENTAÇÕES DA CLASSE ARVBINBUSCA ***
@@ -186,7 +106,7 @@ void ArvBinBusca::escreve_ordenado(No *x) {
   //TODO: implementar (escrever em percurso em-ordem em uma única linha)
   if(x != NULL){
     escreve_ordenado(x->esq);
-    printf("%d ", x->chave);
+    printf("%d ", x->freq);
     escreve_ordenado(x->dir);
     }
 }
@@ -224,10 +144,10 @@ No *ArvBinBusca::busca(int k) {
 
 No *ArvBinBusca::busca(No *x, int k) {
   //TODO: implementar
-  if(x == NULL || x->chave == k)
+  if(x == NULL || x->freq == k)
     return x;
 
-  if(k < x->chave)
+  if(k < x->freq)
     return busca(x->esq, k);
 
   return busca(x->dir, k);
@@ -284,8 +204,8 @@ No *ArvBinBusca::predecessor(No *x) {
   return aux;
 }
 
-void ArvBinBusca::insere(int chave) {
-  No *z = new No(chave);
+void ArvBinBusca::insere(int freq) {
+  No *z = new No(freq);
   insere(z);
 }
 
@@ -297,7 +217,7 @@ void ArvBinBusca::insere(No *z) {
  // percorre até achar a posição para inserir o novo nó z. por que nosso mano z vai ser folha.
   while (x != NULL){
     y = x;
-    if(z->chave < x->chave)
+    if(z->freq < x->freq)
         x = x->esq;
     else
         x = x->dir;
@@ -308,7 +228,7 @@ void ArvBinBusca::insere(No *z) {
   if(y == NULL) //se isso ocorreu era pq a arvore era vazia
     raiz = z;
   else{
-    if(z->chave < y->chave)
+    if(z->freq < y->freq)
         y->esq = z;
     else
         y->dir = z;
@@ -332,8 +252,8 @@ void ArvBinBusca::transplante(No *u, No *v) {
 
 }
 
-bool ArvBinBusca::remove(int chave) {
-  No *z = busca(raiz, chave);
+bool ArvBinBusca::remove(int freq) {
+  No *z = busca(raiz, freq);
   if (z == NULL)
     return false;
 
@@ -391,7 +311,7 @@ void ArvBinBusca::copia(const ArvBinBusca& T) {
   if (T.raiz == NULL)
     raiz = NULL;
   else {
-    raiz = new No(T.raiz->chave);
+    raiz = new No(T.raiz->freq);
     copia(raiz, T.raiz);
   }
 }

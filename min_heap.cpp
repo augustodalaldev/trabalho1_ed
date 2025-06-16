@@ -6,6 +6,8 @@
 using std::string;
 using std::vector;
 
+#include "no.h"
+
 class Heap
 {
 public:
@@ -21,6 +23,7 @@ public:
 
   
 private:
+  //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
   vector<int> S;
 
   int pai(int i);
