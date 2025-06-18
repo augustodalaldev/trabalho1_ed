@@ -14,6 +14,7 @@
 #include <utility>
 #include "min_heap_node.h"
 #include "arv_bin_busca.h"
+#include "bufferbits.h"
 
 using std::vector;
 using std::string;
@@ -22,27 +23,51 @@ using std::pair;
 class Huffman{
     public:
         Huffman();
-        static void compacta(const string& arquivoEntrada, FILE *arquivoSaida);
-        static void descompacta(const string& arquivoEntrada, FILE *arquivoSaida);
+        static void compacta(const string& arquivo_entrada, const string& arquivo_saida);
+        static void descompacta(const string& arquivo_entrada, const string& arquivo_saida);
 
-        //vai virar private dps
-        static vector<int> conta_freq(const string& arquivoEntrada);
+    private:
+        static vector<int> conta_freq(const string& arquivo_entrada);
         static MinHeapNode* constroi_heap(vector<int> dados);
-        //TODO: K = size heap
         static ArvBinBusca* constroi_arvore(MinHeapNode* heap);
+
         static vector<vector<bool>> constroi_tabela(ArvBinBusca* arvore);
         static void constroi_tabela(Node* x, vector<vector<bool>>* v, vector<bool>* buffer);
         static pair<vector<uint8_t>, vector<bool>> percorre_letras(ArvBinBusca* arvore);
         static void percorre_letras(Node* x, pair<vector<uint8_t>, vector<bool>>* letras_bits);
-    private:
 
-
-
+        static void escreve(
+            FILE* arquivo_entrada, 
+            FILE* arquivo_saida, 
+            uint16_t alfabeto_t, 
+            vector<uint8_t> letras, 
+            vector<bool> percurso,
+            vector<vector<bool>> tabela
+        );
 };
 
-vector<int> Huffman::conta_freq(const string& arq){
+void Huffman::compacta(const string& arquivo_entrada, const string& arquivo_saida)
+{
+    vector<int> frequencia = Huffman::conta_freq(arquivo_entrada);
+    MinHeapNode* heap = Huffman::constroi_heap(frequencia);
+    uint16_t alfabeto_t = (uint16_t)heap->tamanho();
+    ArvBinBusca* arvore = Huffman::constroi_arvore(heap);
+    
+    vector<vector<bool>> tabela = Huffman::constroi_tabela(arvore);
+    pair<vector<uint8_t>, vector<bool>> par = Huffman::percorre_letras(arvore);
 
-    FILE *f = fopen(arq.c_str(), "rb");
+    FILE *fe = fopen(arquivo_entrada.c_str(), "rb");
+    FILE *fs = fopen(arquivo_saida.c_str(), "wb");
+
+    escreve(fe, fs, alfabeto_t, par.first, par.second, tabela);
+
+    fclose(fe);
+    fclose(fs);
+}
+
+vector<int> Huffman::conta_freq(const string& arquivo_entrada){
+
+    FILE *f = fopen(arquivo_entrada.c_str(), "rb");
     vector<int> v(256, 0);
 
     char a;
@@ -129,25 +154,46 @@ void Huffman::percorre_letras(Node* x, pair<vector<uint8_t>, vector<bool>>* letr
     percorre_letras(x->dir, letras_bits);
 }
 
+void Huffman::escreve(FILE* arquivo_entrada, FILE* arquivo_saida, uint16_t alfabeto_t, 
+    vector<uint8_t> letras, vector<bool> percurso, vector<vector<bool>> tabela)
+{
+    BufferBitsEscrita buffer_escrita(arquivo_saida);
+
+    //Escreve o K no arquivo de saída
+    fwrite(&alfabeto_t, 2, 1, arquivo_saida);
+
+    //Escreve oplaceholder de S no arquivo de saída
+    uint8_t aux = 0;
+    fwrite(&aux, 1, 1, arquivo_saida);
+
+    //Escreve as n letras no arquivo de saída
+    for (int i = 0; i < letras.size(); i++)
+        fwrite(&letras[i], 1, 1, arquivo_saida);
+
+    //Escreve o percurso pré-ordem no arquivo de saída
+    for (int i = 0; i < percurso.size(); i++)
+        buffer_escrita.escreve_bit(percurso[i]);
+
+    //Escreve os bytes compactados no arquivo de saída
+    char a;
+    while(fread(&a, 1, 1, arquivo_entrada))
+    {
+        vector<bool> codigo = tabela[(int)a];
+        for (int i = 0; i < codigo.size(); i++)
+            buffer_escrita.escreve_bit(codigo[i]);
+    }
+    int s = 8 - buffer_escrita.n;
+    buffer_escrita.descarrega();
+
+    //Escreve o S no arquivo de saída
+    fseek(arquivo_saida, 2, SEEK_SET);
+    fwrite(&s, 1, 1, arquivo_saida);
+}
+
 int main(void)
 {
-    vector<int> i = Huffman::conta_freq("text.txt");
-    MinHeapNode* heap = Huffman::constroi_heap(i);
-    ArvBinBusca* arvore = Huffman::constroi_arvore(heap);
-    vector<vector<bool>> v = Huffman::constroi_tabela(arvore);
-    pair<vector<uint8_t>, vector<bool>> par = Huffman::percorre_letras(arvore);
+    Huffman::compacta("text.txt", "a.huff");
 
-    for (int i = 0; i < par.first.size(); i++)
-    {
-        printf("%d: %d\n", i, par.first[i]);
-    }
-    printf("percurso: ");
-    for (int i = 0; i < par.second.size(); i++)
-    {
-        printf("%d", (int)par.second[i]);
-    }
-    printf("\n");
-    
     /*
     for (int i = 0; i < 256; i++)
     {
@@ -163,6 +209,17 @@ int main(void)
             printf("\n");
         }
     }
+
+    for (int i = 0; i < par.first.size(); i++)
+    {
+        printf("%d: %d\n", i, par.first[i]);
+    }
+    printf("percurso: ");
+    for (int i = 0; i < par.second.size(); i++)
+    {
+        printf("%d", (int)par.second[i]);
+    }
+    printf("\n");
     */
 
     return 0;
