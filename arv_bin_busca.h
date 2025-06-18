@@ -3,15 +3,18 @@
 using std::string;
 
 //Nó
-#include "node.h";
+#include "node.h"
 
 class ArvBinBusca
 {
+friend class Huffman;
+
 public:
   ArvBinBusca();
   ArvBinBusca(const ArvBinBusca& outro); // construtor de cópia
   ~ArvBinBusca();
   ArvBinBusca& operator=(const ArvBinBusca& outro); // operador de atribuição
+  ArvBinBusca(Node *x);
 
   void escreve_ordenado(); // escreve em percurso em-ordem
   void escreve();

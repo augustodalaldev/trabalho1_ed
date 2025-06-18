@@ -10,8 +10,10 @@ class Heap;
 class Node {
   friend class ArvBinBusca;
   friend class MinHeapNode;
+  friend class Huffman;
 
 public:
+  Node();
   Node(const uint8_t byte, const int freq);
   Node(const int freq);
   void escreve(const char *sep = "");

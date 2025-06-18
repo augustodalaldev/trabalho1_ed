@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "min_heap_node.h"
+#include "arv_bin_busca.h"
 
 
 using std::vector;
@@ -26,6 +27,7 @@ class Huffman{
         //vai virar private dps
         static vector<int> contaFreq(const string& arquivoEntrada);
         static MinHeapNode* constroiheap(vector<int> dados);
+        static ArvBinBusca* constroiarvore(MinHeapNode* heap);
     private:
 
 
@@ -47,20 +49,39 @@ vector<int> Huffman::contaFreq(const string& arq){
     return v;
 }
 
+MinHeapNode* Huffman::constroiheap(vector<int> dados)
+{
+  return new MinHeapNode(dados);
+}
+
+ArvBinBusca* Huffman::constroiarvore(MinHeapNode* heap)
+{
+  while (heap->tamanho() > 1)
+  {
+    Node* x = new Node();
+    x->esq = heap->extrai_minima();
+    x->dir = heap->extrai_minima();
+    x->freq = x->dir->freq + x->esq->freq;
+    heap->insere(x);
+  }
+  
+  return new ArvBinBusca(heap->extrai_minima());
+}
+
 
 int main(void)
 {
-
     vector<int> i = Huffman::contaFreq("text.txt");
+    MinHeapNode* heap = Huffman::constroiheap(i);
+    ArvBinBusca* arvore = Huffman::constroiarvore(heap);
+    arvore->escreve();
 
-    /**
+    /*
     int j = 0;
     for(int x : i){
         printf("%d %d\n", x, j++);
     }
     */
-
-
-
+   
     return 0;
 }

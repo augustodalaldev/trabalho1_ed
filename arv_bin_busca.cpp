@@ -1,83 +1,12 @@
 #include "arv_bin_busca.h"
 
-int main(void)
-{
-  ArvBinBusca T; // construtor ArvBinBusca()
-  int v[] = {5, 4, 5, 5};
-
-  for (const auto &x : v)
-    T.insere(x);
-
-  printf("T:\n");
-  T.escreve();
-  printf("Valores de T em ordem crescente: ");
-  T.escreve_ordenado();
-
-  //return 0; //TODO: remover após implementar minimo, maximo, sucessor, predecessor
-
-  Node *raiz = T.get_raiz();
-  printf("Raiz: ");
-  raiz->escreve("\n");
-
-  Node *pre = T.predecessor(raiz);
-  printf("Predecessor da raiz: ");
-  pre->escreve("\n");
-  Node *suc = T.sucessor(raiz);
-  printf("Sucessor da raiz: ");
-  suc->escreve("\n");
-
-  printf("Sucessor do predecessor da raiz (== raiz): ");
-  T.sucessor(pre)->escreve("\n");
-  printf("Predecessor do sucessor da raiz (== raiz): ");
-  T.predecessor(suc)->escreve("\n");
-
-  Node *minimo = T.minimo();
-  Node *maximo = T.maximo();
-  printf("Mínimo: ");
-  minimo->escreve("\n");
-  printf("Máximo: ");
-  maximo->escreve("\n");
-
-  //return 0; //TODO: remover após implementar remoção
-
-
-  T.remove(5);
-  T.remove(5);
-  T.remove(4);
-  T.remove(5);
-
-  printf("T:\n");
-  T.escreve();
-  T.escreve_ordenado();
-  return 0; //TODO: remover após implementar construtor de cópia e operador de atribuição
-
-  ArvBinBusca T2(T); // construtor de cópia
-  T2.insere(30);
-  printf("T:\n");
-  T.escreve();
-  printf("T2:\n");
-  T2.escreve();
-
-  ArvBinBusca T3 = T; // construtor de cópia
-  T3.insere(-8);
-  printf("T:\n");
-  T.escreve();
-  printf("T3:\n");
-  T3.escreve();
-
-  T3 = T; // operador de atribuição
-  T3.insere(100);
-  printf("T:\n");
-  T.escreve();
-  printf("T3:\n");
-  T3.escreve();
-
-  return 0;
-}
-
 //********************************************
 //*** IMPLEMENTAÇÕES DA CLASSE ARVBINBUSCA ***
 //********************************************
+
+ArvBinBusca::ArvBinBusca(Node *x) {
+  raiz = x;
+}
 
 ArvBinBusca::ArvBinBusca() {
   raiz = NULL;
@@ -116,8 +45,9 @@ void ArvBinBusca::escreve() {
 }
 
 void ArvBinBusca::escreve(const string& prefixo, Node *x) {
-  if (x == NULL)
+  if (x == NULL) {
     return;
+  }
 
   bool ehDireito = x->pai and x->pai->dir == x;
   bool temIrmaoEsq = x->pai and x->pai->esq;

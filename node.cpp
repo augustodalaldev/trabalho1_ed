@@ -1,5 +1,13 @@
 #include "node.h"
 
+Node::Node() :
+  byte(0),
+  freq(0),
+  pai(NULL),
+  esq(NULL),
+  dir(NULL) {
+}
+
 Node::Node(const uint8_t byte, const int freq) :
     byte(byte),
     freq(freq),

@@ -13,6 +13,8 @@ using std::vector;
 
 class MinHeapNode
 {
+friend class Huffman;
+
 public:
   MinHeapNode();
   MinHeapNode(vector<int> dados);
@@ -21,12 +23,13 @@ public:
   void escreve(const string& prefixo = "", int i = 0);
   void insere(const int freq);
   void altera_prioridade(int i, int p);
-  Node consulta_minima();
-  Node extrai_minima();
+  Node* consulta_minima();
+  Node* extrai_minima();
+  int tamanho();
 
 private:
   //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
-  vector<Node> S;
+  vector<Node*> S;
 
   int pai(int i);
   int esquerdo(int i);
