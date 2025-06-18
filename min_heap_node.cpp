@@ -4,7 +4,7 @@
 int main(void)
 {
   MinHeapNode h; // construtor MinHeapNode()
-  
+
   for (int i = 10; i > 5; i--)
     h.insere(i);
   printf("h:\n");
@@ -16,37 +16,7 @@ int main(void)
   h.escreve();
 
   int v[] = {1,2,3,4,5};
-  
-  MinHeapNode h2(5, v); // construtor MinHeapNode(int n, int dados[])
-  h2.insere(15);
-  printf("h2:\n");
-  h2.escreve();
 
-  MinHeapNode h3(h2); // construtor de cópia padrão
-  h2.insere(30);
-  printf("h3:\n");
-  h3.escreve();
-
-  MinHeapNode h4 = h2; // construtor de cópia padrão
-  h2.insere(40);
-  printf("h4:\n");
-  h4.escreve();
-  
-  h = h2; // operador de atribuição, sem constructor ou constructor de cópia
-  h.insere(100);
-  printf("h2:\n");
-  h2.escreve();
-  printf("h:\n");
-  h.escreve();
-
-  h = MinHeapNode(5, v); // construtor MinHeapNode(int n, int dados[]), seguido de atribuição (de cópia, não transferência (move))
-  printf("h:\n");
-  h.escreve();
-  
-  h.extrai_minima();
-  h.altera_prioridade(0, -2);
-  printf("h:\n");
-  h.escreve();
 
   return 0;
 }
@@ -55,10 +25,16 @@ int main(void)
 MinHeapNode::MinHeapNode() {
 }
 
-MinHeapNode::MinHeapNode(int n, int dados[]) :
-  S(dados, dados + n) {
-  for (int i = n/2 - 1; i >= 0; i--)
-    desce(i);
+MinHeapNode::MinHeapNode(vector<int> dados) :
+  S() {
+    for(int i = 0; i < dados.size(); i++){
+        if(dados[i] != 0){
+            printf("i = %d, dados[i] = %d\n", i, dados[i]);
+            S.push_back(Node((uint8_t)i, dados[i]));
+        }
+    }
+    for (int i = S.size()/2 - 1; i >= 0; i--)
+        desce(i);
 }
 
 MinHeapNode::~MinHeapNode() {
@@ -82,12 +58,12 @@ void MinHeapNode::escreve(const string& prefixo, int i) {
   if (i < (int) S.size()) {
     bool ehEsquerdo = i % 2 != 0;
     bool temIrmao = i < (int) S.size()-1;
-    
+
     printf(prefixo.c_str());
     printf(ehEsquerdo and temIrmao ? "├──" : "└──" );
 
     printf("(%df,%dby)\n", S[i].freq, S[i].byte);
-      
+
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), esquerdo(i));
     escreve(prefixo + (ehEsquerdo ? "│   " : "    "), direito(i));
   }

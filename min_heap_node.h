@@ -15,7 +15,7 @@ class MinHeapNode
 {
 public:
   MinHeapNode();
-  MinHeapNode(int n, int dados[]);
+  MinHeapNode(vector<int> dados);
   ~MinHeapNode();
   void escreve_niveis();
   void escreve(const string& prefixo = "", int i = 0);
