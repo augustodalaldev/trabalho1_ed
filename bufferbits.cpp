@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-
 void escrever_binario(uint8_t numero)
 {
   for (int i = 128; i > 0; i >>= 1)

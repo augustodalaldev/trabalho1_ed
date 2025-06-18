@@ -7,7 +7,7 @@ MinHeapNode::MinHeapNode(vector<int> dados) :
   S() {
     for(int i = 0; i < dados.size(); i++){
         if(dados[i] != 0){
-            printf("i = %d, dados[i] = %d\n", i, dados[i]);
+            //printf("i = %d, dados[i] = %d\n", i, dados[i]);
             S.push_back(new Node((uint8_t)i, dados[i]));
         }
     }
