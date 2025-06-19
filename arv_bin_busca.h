@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <string>
+#include <vector>
+
 using std::string;
+using std::vector;
 
 //Nó
 #include "node.h"
@@ -11,6 +14,7 @@ friend class Huffman;
 
 public:
   ArvBinBusca();
+  ArvBinBusca(vector<bool> percurso, vector<uint8_t> letras);
   ArvBinBusca(const ArvBinBusca& outro); // construtor de cópia
   ~ArvBinBusca();
   ArvBinBusca& operator=(const ArvBinBusca& outro); // operador de atribuição
@@ -44,6 +48,7 @@ private:
   void insere(Node *z);
   void transplante(Node *u, Node *v);
   void remove(Node *z);
+  void cria_arvore(vector<bool>* percurso, vector<uint8_t>* letras, int* contador_percurso, int* contador_folhas, Node* x);
 
   void limpa(Node *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
 

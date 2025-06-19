@@ -36,11 +36,20 @@ class Huffman{
         static pair<vector<uint8_t>, vector<bool>> percorre_letras(ArvBinBusca* arvore);
         static void percorre_letras(Node* x, pair<vector<uint8_t>, vector<bool>>* letras_bits);
 
-        static void escreve(
-            FILE* arquivo_entrada, 
-            FILE* arquivo_saida, 
-            uint16_t alfabeto_t, 
-            vector<uint8_t> letras, 
+        static void escreve_compacta(
+            FILE* arquivo_entrada,
+            FILE* arquivo_saida,
+            uint16_t alfabeto_t,
+            vector<uint8_t> letras,
+            vector<bool> percurso,
+            vector<vector<bool>> tabela
+        );
+
+        static void escreve_descompacta(
+            FILE* arquivo_entrada,
+            FILE* arquivo_saida,
+            uint16_t alfabeto_t,
+            vector<uint8_t> letras,
             vector<bool> percurso,
             vector<vector<bool>> tabela
         );
@@ -52,14 +61,67 @@ void Huffman::compacta(const string& arquivo_entrada, const string& arquivo_said
     MinHeapNode* heap = Huffman::constroi_heap(frequencia);
     uint16_t alfabeto_t = (uint16_t)heap->tamanho();
     ArvBinBusca* arvore = Huffman::constroi_arvore(heap);
-    
+
     vector<vector<bool>> tabela = Huffman::constroi_tabela(arvore);
     pair<vector<uint8_t>, vector<bool>> par = Huffman::percorre_letras(arvore);
 
     FILE *fe = fopen(arquivo_entrada.c_str(), "rb");
     FILE *fs = fopen(arquivo_saida.c_str(), "wb");
 
-    escreve(fe, fs, alfabeto_t, par.first, par.second, tabela);
+    escreve_compacta(fe, fs, alfabeto_t, par.first, par.second, tabela);
+
+    fclose(fe);
+    fclose(fs);
+}
+
+void Huffman::descompacta(const string& arquivo_entrada, const string& arquivo_saida)
+{
+
+    FILE *fe = fopen(arquivo_entrada.c_str(), "rb");
+    FILE *fs = fopen(arquivo_saida.c_str(), "wb");
+
+    uint16_t alfabeto_t;
+    //Lendo os dois primeiros bytes = K.
+    fread(&alfabeto_t, 2, 1, fe);
+
+    uint8_t sobra;
+    //Lendo a sobra
+    fread(&sobra, 1,1, fe);
+
+    //Lendo as letras do alfabeto
+    vector<uint8_t> letras(alfabeto_t);
+    for(int i =0; i < alfabeto_t; i++)
+        fread(&letras[i], 1,1, fe);
+
+    /**for(int i =0; i < alfabeto_t; i++)
+        printf("i = %d ASCII = %d\n", i, letras[i]);*/
+
+    //Lendo o percurso das letras em pré-ordem
+    vector<bool> percurso;
+    BufferBitsLeitura buffer_leitura(fe);
+    int cont = 0;
+    while(cont < alfabeto_t){
+        uint8_t simbolo = buffer_leitura.le_bit();
+        percurso.push_back(simbolo);
+        if(simbolo == 1)
+            cont++;
+    }
+
+    //criando a árvore
+    ArvBinBusca* arvore = new ArvBinBusca(percurso, letras);
+
+
+    /**for(int i = 0; i < percurso.size(); i++)
+        printf("%d", (int)percurso[i]);
+
+    printf("\n");*/
+
+
+    //printf("%d", sobra);
+
+
+
+//    escreve_descompacta(fe, fs, alfabeto_t, par.first, par.second, tabela);
 
     fclose(fe);
     fclose(fs);
@@ -154,7 +216,7 @@ void Huffman::percorre_letras(Node* x, pair<vector<uint8_t>, vector<bool>>* letr
     percorre_letras(x->dir, letras_bits);
 }
 
-void Huffman::escreve(FILE* arquivo_entrada, FILE* arquivo_saida, uint16_t alfabeto_t, 
+void Huffman::escreve_compacta(FILE* arquivo_entrada, FILE* arquivo_saida, uint16_t alfabeto_t,
     vector<uint8_t> letras, vector<bool> percurso, vector<vector<bool>> tabela)
 {
     BufferBitsEscrita buffer_escrita(arquivo_saida);
@@ -190,9 +252,48 @@ void Huffman::escreve(FILE* arquivo_entrada, FILE* arquivo_saida, uint16_t alfab
     fwrite(&s, 1, 1, arquivo_saida);
 }
 
+void Huffman::escreve_descompacta(FILE* arquivo_entrada, FILE* arquivo_saida, uint16_t alfabeto_t,
+    vector<uint8_t> letras, vector<bool> percurso, vector<vector<bool>> tabela)
+{
+    BufferBitsEscrita buffer_escrita(arquivo_saida);
+
+    //Escreve o K no arquivo de saída
+    fwrite(&alfabeto_t, 2, 1, arquivo_saida);
+
+    //Escreve oplaceholder de S no arquivo de saída
+    uint8_t aux = 0;
+    fwrite(&aux, 1, 1, arquivo_saida);
+
+    //Escreve as n letras no arquivo de saída
+    for (int i = 0; i < letras.size(); i++)
+        fwrite(&letras[i], 1, 1, arquivo_saida);
+
+    //Escreve o percurso pré-ordem no arquivo de saída
+    for (int i = 0; i < percurso.size(); i++)
+        buffer_escrita.escreve_bit(percurso[i]);
+
+    //Escreve os bytes compactados no arquivo de saída
+    char a;
+    while(fread(&a, 1, 1, arquivo_entrada))
+    {
+        vector<bool> codigo = tabela[(int)a];
+        for (int i = 0; i < codigo.size(); i++)
+            buffer_escrita.escreve_bit(codigo[i]);
+    }
+    int s = 8 - buffer_escrita.n;
+    buffer_escrita.descarrega();
+
+    //Escreve o S no arquivo de saída
+    fseek(arquivo_saida, 2, SEEK_SET);
+    fwrite(&s, 1, 1, arquivo_saida);
+}
+
+
+
 int main(void)
 {
     Huffman::compacta("text.txt", "a.huff");
+    Huffman::descompacta("a.huff", "bteste.txt");
 
     /*
     for (int i = 0; i < 256; i++)
@@ -204,7 +305,7 @@ int main(void)
             for (int j = 0; j < v[i].size(); j++)
             {
                 printf("%d", (int)aux[j]);
-                
+
             }
             printf("\n");
         }

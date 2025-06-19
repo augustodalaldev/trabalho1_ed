@@ -4,6 +4,15 @@
 //*** IMPLEMENTAÇÕES DA CLASSE ARVBINBUSCA ***
 //********************************************
 
+ArvBinBusca::ArvBinBusca(vector<bool> percurso, vector<uint8_t> letras){
+
+    raiz = new Node();
+    int contador_percurso = 0;
+    int contador_folha = 0;
+    cria_arvore(&percurso, &letras, &contador_percurso, &contador_folha, raiz);
+}
+
+
 ArvBinBusca::ArvBinBusca(Node *x) {
   raiz = x;
 }
@@ -18,6 +27,26 @@ ArvBinBusca::ArvBinBusca(const ArvBinBusca& outro) {
 
 ArvBinBusca::~ArvBinBusca() {
   limpa();
+}
+
+//0010111
+void ArvBinBusca::cria_arvore(vector<bool>* percurso, vector<uint8_t>* letras, int* contador_percurso, int* contador_folhas, Node* x){
+
+    if((*percurso)[(*contador_percurso)]){
+        //printf("letras[%d] = %c\n", *contador_folhas, (*letras)[(*contador_folhas)]);
+        x->byte = (*letras)[(*contador_folhas)++];
+        return;
+    }
+
+    Node* esq = new Node();
+    Node* dir = new Node();
+    x->esq = esq;
+    x->dir = dir;
+    (*contador_percurso)++;
+    cria_arvore(percurso, letras, contador_percurso, contador_folhas, x->esq);
+    (*contador_percurso)++;
+    cria_arvore(percurso, letras, contador_percurso, contador_folhas, x->dir);
+
 }
 
 ArvBinBusca& ArvBinBusca::operator=(const ArvBinBusca& outro) {
@@ -35,7 +64,8 @@ void ArvBinBusca::escreve_ordenado(Node *x) {
   //TODO: implementar (escrever em percurso em-ordem em uma única linha)
   if(x != NULL){
     escreve_ordenado(x->esq);
-    printf("%d ", x->freq);
+    printf("%d ", x->byte);
+    //printf("freq = %d\n", x->freq);
     escreve_ordenado(x->dir);
     }
 }
