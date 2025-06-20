@@ -67,43 +67,18 @@ HuffmanTree& HuffmanTree::operator=(const HuffmanTree& outro) {
   return *this;
 }
 
-void HuffmanTree::escreve_ordenado() {
-  escreve_ordenado(raiz);
+void HuffmanTree::escreve_pre_ordem() {
+  escreve_pre_ordem(raiz);
   putchar('\n');
 }
 
-void HuffmanTree::escreve_ordenado(Node *x) {
+void HuffmanTree::escreve_pre_ordem(Node *x) {
   //TODO: implementar (escrever em percurso em-ordem em uma única linha)
   if(x != NULL){
-    escreve_ordenado(x->esq);
-    printf("%d ", x->byte);
-    //printf("freq = %d\n", x->freq);
-    escreve_ordenado(x->dir);
-    }
-}
-
-void HuffmanTree::escreve() {
-  escreve("", raiz);
-}
-
-void HuffmanTree::escreve(const string& prefixo, Node *x) {
-  if (x == NULL) {
-    return;
+    printf("%dbyte %dfrequencia\n", x->byte, x->freq);
+    escreve_pre_ordem(x->esq);
+    escreve_pre_ordem(x->dir);
   }
-
-  bool ehDireito = x->pai and x->pai->dir == x;
-  bool temIrmaoEsq = x->pai and x->pai->esq;
-
-  printf(prefixo.c_str());
-  printf(ehDireito and temIrmaoEsq ? "├──" : "└──" );
-
-  if (x->pai == NULL) // raiz
-    x->escreve("\n");
-  else
-    x->escreve(ehDireito ? "d\n" : "e\n");
-
-  escreve(prefixo + (ehDireito and temIrmaoEsq ? "│   " : "    "), x->dir);
-  escreve(prefixo + (ehDireito and temIrmaoEsq ? "│   " : "    "), x->esq);
 }
 
 Node *HuffmanTree::get_raiz() {

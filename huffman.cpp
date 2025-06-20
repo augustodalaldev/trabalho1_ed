@@ -26,12 +26,12 @@ class Huffman{
         static void descompacta(const string& arquivo_entrada, const string& arquivo_saida);
 
     private:
-        static vector<int> conta_freq(const string& arquivo_entrada);
+        static vector<int> conta_frequencia(const string& arquivo_entrada);
 
         static vector<vector<bool>> constroi_tabela(HuffmanTree* arvore);
 
         static void constroi_tabela(
-            Node* x, vector<vector<bool>>* v,
+            Node* x, vector<vector<bool>>* tabela,
             vector<bool>* buffer
         );
 
@@ -62,12 +62,13 @@ class Huffman{
 
 void Huffman::compacta(const string& arquivo_entrada, const string& arquivo_saida)
 {
-    vector<int> frequencia = Huffman::conta_freq(arquivo_entrada);
+    vector<int> frequencia = Huffman::conta_frequencia(arquivo_entrada);
     MinHeapNode* heap = new MinHeapNode(frequencia);
     uint16_t alfabeto_t = (uint16_t)heap->tamanho();
     HuffmanTree* arvore = new HuffmanTree(heap);
 
     vector<vector<bool>> tabela = Huffman::constroi_tabela(arvore);
+
     pair<vector<uint8_t>, vector<bool>> par = Huffman::percorre_letras(arvore);
 
     FILE *fe = fopen(arquivo_entrada.c_str(), "rb");
@@ -77,6 +78,7 @@ void Huffman::compacta(const string& arquivo_entrada, const string& arquivo_said
 
     fclose(fe);
     fclose(fs);
+
 }
 
 void Huffman::descompacta(const string& arquivo_entrada, const string& arquivo_saida)
@@ -115,7 +117,6 @@ void Huffman::descompacta(const string& arquivo_entrada, const string& arquivo_s
     //criando a árvore
     HuffmanTree* arvore = new HuffmanTree(percurso, letras);
 
-
     /**for(int i = 0; i < percurso.size(); i++)
         printf("%d", (int)percurso[i]);
 
@@ -132,31 +133,36 @@ void Huffman::descompacta(const string& arquivo_entrada, const string& arquivo_s
     fclose(fs);
 }
 
-vector<int> Huffman::conta_freq(const string& arquivo_entrada){
+vector<int> Huffman::conta_frequencia(const string& arquivo_entrada){
 
     FILE *f = fopen(arquivo_entrada.c_str(), "rb");
-    vector<int> v(256, 0);
-
-    char a;
-    while(fread(&a, 1, 1, f))
-    {
-        v[(int)a]++;
+    //TODO: alterar isso daqui depois para main
+    if (!f) {
+        perror("Erro ao abrir arquivo");
+        exit(EXIT_FAILURE);
     }
+    
+    vector<int> frequencia(256, 0);
+
+    uint8_t a;
+    while(fread(&a, 1, 1, f))
+        frequencia[(int)a]++;
+    
 
     fclose(f);
-    return v;
+    return frequencia;
 }
 
 vector<vector<bool>> Huffman::constroi_tabela(HuffmanTree* arvore)
 {
     Node* raiz = arvore->raiz;
-    vector<vector<bool>> v(256, vector<bool>(0));
+    vector<vector<bool>> tabela(256, vector<bool>(0));
     vector<bool> buffer(0);
-    constroi_tabela(raiz, &v, &buffer);
-    return v;
+    constroi_tabela(raiz, &tabela, &buffer);
+    return tabela;
 }
 
-void Huffman::constroi_tabela(Node* x, vector<vector<bool>>* v, vector<bool>* buffer)
+void Huffman::constroi_tabela(Node* x, vector<vector<bool>>* tabela, vector<bool>* buffer)
 {
     if(x == NULL)
     {
@@ -164,14 +170,14 @@ void Huffman::constroi_tabela(Node* x, vector<vector<bool>>* v, vector<bool>* bu
     }
     if(x->dir == NULL && x->esq == NULL)
     {
-        (*v)[x->byte] = *buffer;
+        (*tabela)[x->byte] = *buffer;
         return;
     }
     buffer->push_back(0);
-    constroi_tabela(x->esq, v, buffer);
+    constroi_tabela(x->esq, tabela, buffer);
     buffer->pop_back();
     buffer->push_back(1);
-    constroi_tabela(x->dir, v, buffer);
+    constroi_tabela(x->dir, tabela, buffer);
     buffer->pop_back();
 }
 
@@ -188,9 +194,8 @@ pair<vector<uint8_t>, vector<bool>> Huffman::percorre_letras(HuffmanTree* arvore
 void Huffman::percorre_letras(Node* x, pair<vector<uint8_t>, vector<bool>>* letras_bits)
 {
     if(x == NULL)
-    {
         return;
-    }
+    
     if(x->dir == NULL && x->esq == NULL)
     {
         letras_bits->first.push_back(x->byte);
@@ -215,20 +220,21 @@ void Huffman::escreve_compacta(FILE* arquivo_entrada, FILE* arquivo_saida, uint1
     fwrite(&aux, 1, 1, arquivo_saida);
 
     //Escreve as n letras no arquivo de saída
-    for (int i = 0; i < letras.size(); i++)
+    for (int i = 0; i < (int) letras.size(); i++)
         fwrite(&letras[i], 1, 1, arquivo_saida);
 
     //Escreve o percurso pré-ordem no arquivo de saída
-    for (int i = 0; i < percurso.size(); i++)
+    for (int i = 0; i < (int) percurso.size(); i++)
         buffer_escrita.escreve_bit(percurso[i]);
 
     //Escreve os bytes compactados no arquivo de saída
-    char a;
+    uint8_t a;
     while(fread(&a, 1, 1, arquivo_entrada))
     {
         vector<bool> codigo = tabela[(int)a];
-        for (int i = 0; i < codigo.size(); i++)
+        for (int i = 0; i < (int) codigo.size(); i++)
             buffer_escrita.escreve_bit(codigo[i]);
+        
     }
     int s = 8 - buffer_escrita.n;
     buffer_escrita.descarrega();

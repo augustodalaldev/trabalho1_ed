@@ -23,8 +23,7 @@ public:
   HuffmanTree(vector<bool> percurso, vector<uint8_t> letras);
   HuffmanTree(MinHeapNode* heap);
 
-  void escreve_ordenado(); // escreve em percurso em-ordem
-  void escreve();
+  void escreve_pre_ordem(); // escreve em percurso em-ordem
 
   Node *get_raiz(); // devolve a raiz
   Node *busca(int k); // devolve o ponteiro para um elemento, se achar, ou NULL
@@ -41,8 +40,7 @@ public:
 private:
   Node *raiz;
 
-  void escreve_ordenado(Node *x); // escreve em percurso em-ordem
-  void escreve(const string& prefixo, Node *x);
+  void escreve_pre_ordem(Node *x); // escreve em percurso em-ordem
 
   Node *busca(Node *x, int k);
   Node *minimo(Node *x);

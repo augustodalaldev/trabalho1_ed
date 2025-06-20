@@ -55,7 +55,7 @@ void BufferBitsEscrita::escreve_bit(uint8_t bit)
 {
   // TODO: Adicionar o bit ao byte na posição correta
     bit &= 1; //pega o valor do bit mais a direita
-    byte |= bit << 7 - n;
+    byte |= bit << (7 - n);
     n++;
 
   if (n == 8)

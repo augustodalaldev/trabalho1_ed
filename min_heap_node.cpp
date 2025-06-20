@@ -5,7 +5,7 @@ MinHeapNode::MinHeapNode() {
 
 MinHeapNode::MinHeapNode(vector<int> dados) :
   S() {
-    for(int i = 0; i < dados.size(); i++){
+    for(int i = 0; i < (int) dados.size(); i++){
         if(dados[i] != 0){
             //printf("i = %d, dados[i] = %d\n", i, dados[i]);
             S.push_back(new Node((uint8_t)i, dados[i]));
@@ -30,21 +30,6 @@ void MinHeapNode::escreve_niveis() {
     }
   }
   putchar('\n');
-}
-
-void MinHeapNode::escreve(const string& prefixo, int i) {
-  if (i < (int) S.size()) {
-    bool ehEsquerdo = i % 2 != 0;
-    bool temIrmao = i < (int) S.size()-1;
-
-    printf(prefixo.c_str());
-    printf(ehEsquerdo and temIrmao ? "├──" : "└──" );
-
-    printf("(%df,%dby)\n", S[i]->freq, S[i]->byte);
-
-    escreve(prefixo + (ehEsquerdo ? "│   " : "    "), esquerdo(i));
-    escreve(prefixo + (ehEsquerdo ? "│   " : "    "), direito(i));
-  }
 }
 
 int MinHeapNode::tamanho() {
