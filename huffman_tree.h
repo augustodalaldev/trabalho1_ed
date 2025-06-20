@@ -7,18 +7,21 @@ using std::vector;
 
 //Nó
 #include "node.h"
+#include "min_heap_node.h"
 
-class ArvBinBusca
+class HuffmanTree
 {
 friend class Huffman;
 
 public:
-  ArvBinBusca();
-  ArvBinBusca(vector<bool> percurso, vector<uint8_t> letras);
-  ArvBinBusca(const ArvBinBusca& outro); // construtor de cópia
-  ~ArvBinBusca();
-  ArvBinBusca& operator=(const ArvBinBusca& outro); // operador de atribuição
-  ArvBinBusca(Node *x);
+  HuffmanTree();
+  HuffmanTree(const HuffmanTree& outro); // construtor de cópia
+  ~HuffmanTree();
+  HuffmanTree& operator=(const HuffmanTree& outro); // operador de atribuição
+  HuffmanTree(Node *x);
+
+  HuffmanTree(vector<bool> percurso, vector<uint8_t> letras);
+  HuffmanTree(MinHeapNode* heap);
 
   void escreve_ordenado(); // escreve em percurso em-ordem
   void escreve();
@@ -52,7 +55,7 @@ private:
 
   void limpa(Node *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
 
-  void copia(const ArvBinBusca& T); // copia uma árvore T para a atual a partir da raiz,
+  void copia(const HuffmanTree& T); // copia uma árvore T para a atual a partir da raiz,
                                     // usada no construtor de cópia e no operador de atribuição
   void copia(Node *dest, Node *orig);   // copia um nó e os descendentes recursivamente
 };

@@ -21,11 +21,13 @@ public:
   ~MinHeapNode();
   void escreve_niveis();
   void escreve(const string& prefixo = "", int i = 0);
-  void insere(const int freq);
   void altera_prioridade(int i, int p);
   Node* consulta_minima();
   Node* extrai_minima();
   int tamanho();
+
+  void insere(const int freq);
+  void insere(Node* n);
 
 private:
   //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
@@ -38,7 +40,6 @@ private:
   void desce(int i);
   void sobe(int i);
 
-  void insere(Node* n);
 };
 
 #endif //MIN_HEAP_NODE_H

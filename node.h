@@ -4,11 +4,11 @@
 #include <cstdint>
 #include <cstdio>
 
-class ArvBinBusca;
+class HuffmanTree;
 class Heap;
 
 class Node {
-  friend class ArvBinBusca;
+  friend class HuffmanTree;
   friend class MinHeapNode;
   friend class Huffman;
 
