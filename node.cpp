@@ -24,7 +24,6 @@ Node::Node(const int freq) :
     dir(NULL) {
 }
 
-
 void Node::escreve(const char *sep) {
   printf("%2d%s", freq, sep);
 }

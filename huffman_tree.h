@@ -1,3 +1,16 @@
+/************************************************
+ *
+ * Grupo Itadakimais 2
+ * Augusto Dalal, Luís Favoreto e Thiago Fernandes
+ *
+ * Trabalho de Estuturas de Dados
+ * Professor (a): Diego Padilha Rubert
+ *
+ */
+
+#ifndef HUFFMAN_TREE_H
+#define HUFFMAN_TREE_H
+
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -5,55 +18,45 @@
 using std::string;
 using std::vector;
 
-//Nó
+// Nó
 #include "node.h"
 #include "min_heap_node.h"
 
 class HuffmanTree
 {
-friend class Huffman;
+  friend class Huffman;
 
 public:
   HuffmanTree();
-  HuffmanTree(const HuffmanTree& outro); // construtor de cópia
+  HuffmanTree(const HuffmanTree &outro); // construtor de cópia
   ~HuffmanTree();
-  HuffmanTree& operator=(const HuffmanTree& outro); // operador de atribuição
-  HuffmanTree(Node *x);
+  HuffmanTree &operator=(const HuffmanTree &outro); // operador de atribuição
 
-  HuffmanTree(vector<bool> percurso, vector<uint8_t> letras);
-  HuffmanTree(MinHeapNode* heap);
+  HuffmanTree(
+      vector<bool> percurso,
+      vector<uint8_t> letras);
+
+  HuffmanTree(MinHeapNode *heap);
 
   void escreve_pre_ordem(); // escreve em percurso em-ordem
 
-  Node *get_raiz(); // devolve a raiz
-  Node *busca(int k); // devolve o ponteiro para um elemento, se achar, ou NULL
-  Node *minimo(); // devolve o menor elemento da árvore
-  Node *maximo(); // devolve o maior elemento da árvore
-  Node *sucessor(Node *x); // devolve o sucessor de um elemento
-  Node *predecessor(Node *x); // devolve o predecessor de um elemento
-
   void insere(int freq);
-  bool remove(int freq);
 
   void limpa(); // remove todos elementos da árvore
 
 private:
   Node *raiz;
 
+  HuffmanTree(Node *x);
+
   void escreve_pre_ordem(Node *x); // escreve em percurso em-ordem
-
-  Node *busca(Node *x, int k);
-  Node *minimo(Node *x);
-  Node *maximo(Node *x);
-
   void insere(Node *z);
-  void transplante(Node *u, Node *v);
-  void remove(Node *z);
-  void cria_arvore(vector<bool>* percurso, vector<uint8_t>* letras, int* contador_percurso, int* contador_folhas, Node* x);
+
+  void cria_arvore(
+      vector<bool> *percurso, vector<uint8_t> *letras,
+      int *contador_percurso, int *contador_folhas, Node *x);
 
   void limpa(Node *x); // dado um nó x, remove recursivamente elementos abaixo e deleta x
-
-  void copia(const HuffmanTree& T); // copia uma árvore T para a atual a partir da raiz,
-                                    // usada no construtor de cópia e no operador de atribuição
-  void copia(Node *dest, Node *orig);   // copia um nó e os descendentes recursivamente
 };
+
+#endif // HUFFMAN_TREE_H

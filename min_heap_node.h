@@ -1,3 +1,13 @@
+/************************************************
+ *
+ * Grupo Itadakimais 2
+ * Augusto Dalal, Luís Favoreto e Thiago Fernandes
+ *
+ * Trabalho de Estuturas de Dados
+ * Professor (a): Diego Padilha Rubert
+ *
+ */
+
 #ifndef MIN_HEAP_NODE_H
 #define MIN_HEAP_NODE_H
 
@@ -13,25 +23,22 @@ using std::vector;
 
 class MinHeapNode
 {
-friend class Huffman;
+  friend class Huffman;
+  friend class HuffmanTree;
 
 public:
   MinHeapNode();
   MinHeapNode(vector<int> dados);
   ~MinHeapNode();
   void escreve_niveis();
-  void escreve(const string& prefixo = "", int i = 0);
   void altera_prioridade(int i, int p);
-  Node* consulta_minima();
-  Node* extrai_minima();
   int tamanho();
 
   void insere(const int freq);
-  void insere(Node* n);
 
 private:
-  //TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
-  vector<Node*> S;
+  // TODO: ALTERAR ISSO DAQUI PARA NO, E MUDAR TUDO QUE DER PAU
+  vector<Node *> S;
 
   int pai(int i);
   int esquerdo(int i);
@@ -40,6 +47,9 @@ private:
   void desce(int i);
   void sobe(int i);
 
+  Node *consulta_minima();
+  Node *extrai_minima();
+  void insere(Node *n);
 };
 
-#endif //MIN_HEAP_NODE_H
+#endif // MIN_HEAP_NODE_H
